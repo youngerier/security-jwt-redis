@@ -1,11 +1,13 @@
 plugins {
-    id 'org.springframework.boot' version '2.1.7.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
     id 'java'
+    id 'maven'
 }
+//plugins{
+//    id 'java'
+//}
 
 group = 'com.ziggle'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -23,16 +25,29 @@ repositories {
     mavenCentral()
 }
 
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://115.239.209.191:8580/repository/maven-snapshots/") {
+                authentication(userName: "dev", password: "devuser")
+            }
+            pom.version = version
+            pom.artifactId = project.name
+            pom.groupId = 'com.oucloud.web'
+        }
+    }
+}
+
 dependencies {
 
     compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.1.7.RELEASE'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.1.7.RELEASE'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.1.7.RELEASE'
+    testImplementation 'org.springframework.security:spring-security-test:5.1.6.RELEASE'
 }
 
 configurations {
