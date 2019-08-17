@@ -50,7 +50,7 @@ public class SecurityJwtTokenDecoder implements ISecurityJwtTokenDecoder {
             Boolean enable = (Boolean) claims.get(CLAIM_KEY_ENABLE);
             String id = claims.getId();
             Collection<? extends GrantedAuthority> authorities = parseArrayToAuthorities(roles);
-            user = new SysUserDetail(Long.parseLong(id), username, "pa****rd", enable, authorities);
+            user = new SysUserDetail(Long.parseLong(id), username, "pa****rd", !enable, authorities);
             return user;
         } catch (Exception e) {
             throw new SecurityJwtTokenException(e.getMessage(), e);
