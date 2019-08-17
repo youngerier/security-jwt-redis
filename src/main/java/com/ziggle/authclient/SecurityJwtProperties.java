@@ -13,6 +13,16 @@ public class SecurityJwtProperties {
 
     private List<String> authWhiteLists;
     private String routingPrefix;
+    private String signingKey;
+
+
+    public String getSigningKey() {
+        return signingKey;
+    }
+
+    public void setSigningKey(String signingKey) {
+        this.signingKey = signingKey;
+    }
 
 
     public String getRoutingPrefix() {

@@ -3,14 +3,11 @@ package com.ziggle.authclient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 public class SecurityJwtConfig {
@@ -38,23 +35,9 @@ public class SecurityJwtConfig {
 
     @Bean
     @ConditionalOnClass(EnableWebSecurity.class)
-    public WebSecurityConfigurerAdapter webSecurityConfigurerAdapter(AuthenticationProvider authenticationProvider,
-                                                                     SecurityJwtProperties props ,ISecurityJwtTokenDecoder decoder) {
+    public WebSecurityConfigurerAdapter webSecurityConfigurerAdapter(SecurityJwtProperties props, ISecurityJwtTokenDecoder decoder) {
 
         return new WebSecurityConfigurerAdapter() {
-
-            @Bean(BeanIds.AUTHENTICATION_MANAGER)
-            @Override
-            public AuthenticationManager authenticationManagerBean() throws Exception {
-                return super.authenticationManagerBean();
-            }
-
-            @Override
-            protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-                //自定义身份验证组件
-                auth.authenticationProvider(authenticationProvider);
-                super.configure(auth);
-            }
 
             @Override
             protected void configure(HttpSecurity http) throws Exception {
@@ -81,10 +64,13 @@ public class SecurityJwtConfig {
                         .anyRequest().authenticated()
                         .and()
                         // 认证前添加 token exception handler
-                        // .addFilter(new JwtUsernamePasswordLoginFilter(authenticationManager()))
+                        .addFilterBefore(new SecurityJwtUsernamePasswordLoginFilter(), ChannelProcessingFilter.class)
+//                        .addFilterAfter(new SecurityJwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
                         .addFilterBefore(new SecurityJwtAuthenticationFilter(authenticationManager(), decoder), UsernamePasswordAuthenticationFilter.class)
                 ;
             }
+
+
         };
     }
 

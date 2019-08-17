@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.lang.annotation.*;
@@ -16,8 +15,7 @@ import java.lang.annotation.*;
 @Inherited
 @EnableWebSecurity
 @AutoConfigureBefore(SecurityAutoConfiguration.class)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @AutoConfigurationPackage
-@Import({SecurityJwtConfigurationSelector.class})
+@Import({SecurityJwtConfigurationSelector.class}) // 导入依赖到ioc
 public @interface EnableSecurityJwtClient {
 }

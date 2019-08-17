@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Objects;
 
-public abstract class SysUserDetail implements UserDetails {
+public class SysUserDetail implements UserDetails {
     private static final long serialVersionUID = -2184425668041155384L;
     private Long id;
     private String username;

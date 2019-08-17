@@ -7,7 +7,8 @@ public class SecurityJwtConfigurationSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         return new String[]{
-                SecurityJwtConfig.class.getName()
+                SecurityJwtConfig.class.getName(),
+                SecurityJwtTokenDecoder.class.getName()
         };
     }
 }
