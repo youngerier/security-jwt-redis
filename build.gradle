@@ -6,8 +6,8 @@ plugins {
 //    id 'java'
 //}
 
-group = 'com.ziggle'
-version = '0.0.5'
+group = 'com.ziggle.common'
+version = '0.0.5-SNAPSHOT'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -28,12 +28,12 @@ repositories {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "http://115.239.209.191:8580/repository/maven-snapshots/") {
+            repository(url: "http://172.16.20.230:8081/repository/maven-snapshots/") {
                 authentication(userName: "dev", password: "devuser")
             }
             pom.version = version
             pom.artifactId = project.name
-            pom.groupId = group
+            pom.groupId = project.group
         }
     }
 }
