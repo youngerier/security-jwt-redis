@@ -45,6 +45,9 @@ public class SecurityJwtTokenDecoder implements ISecurityJwtTokenDecoder {
         SysUserDetail user;
         try {
             Claims claims = cache.get(token);
+           if (claims == null){
+               throw new SecurityJwtTokenException("token 不存在,重新申请token");
+           }
             String username = claims.getSubject();
             List roles = (List) claims.get(CLAIM_KEY_AUTHORITIES);
             Boolean enable = (Boolean) claims.get(CLAIM_KEY_ENABLE);

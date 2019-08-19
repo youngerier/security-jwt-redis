@@ -1,6 +1,7 @@
 package com.ziggle.authclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.sync.RedisCommands;
@@ -28,8 +29,10 @@ public class SecurityJwtRedisConnection {
     public String getUserInfo(String key) {
         String s = cmd.get(key);
         try {
-            SecurityJwtToken securityJwtToken = om.readValue(s, SecurityJwtToken.class);
-            return securityJwtToken.getToken();
+            if (!Strings.isNullOrEmpty(s)) {
+                SecurityJwtToken securityJwtToken = om.readValue(s, SecurityJwtToken.class);
+                return securityJwtToken.getToken();
+            }
         } catch (IOException e) {
             // decode error
             log.error(e.getMessage(), e);
