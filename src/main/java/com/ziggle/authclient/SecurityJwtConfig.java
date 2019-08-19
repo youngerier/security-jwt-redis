@@ -35,7 +35,9 @@ public class SecurityJwtConfig {
 
     @Bean
     @ConditionalOnClass(EnableWebSecurity.class)
-    public WebSecurityConfigurerAdapter webSecurityConfigurerAdapter(SecurityJwtProperties props, ISecurityJwtTokenDecoder decoder) {
+    public WebSecurityConfigurerAdapter webSecurityConfigurerAdapter(SecurityJwtProperties props, ISecurityJwtTokenDecoder decoder,
+                                                                     SecurityJwtProperties properties, SecurityJwtRedisConnection conn
+    ) {
 
         return new WebSecurityConfigurerAdapter() {
 
@@ -66,7 +68,7 @@ public class SecurityJwtConfig {
                         // 认证前添加 token exception handler
                         .addFilterBefore(new SecurityJwtUsernamePasswordLoginFilter(), ChannelProcessingFilter.class)
 //                        .addFilterAfter(new SecurityJwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(new SecurityJwtAuthenticationFilter(authenticationManager(), decoder), UsernamePasswordAuthenticationFilter.class)
+                        .addFilterBefore(new SecurityJwtAuthenticationFilter(authenticationManager(), decoder, conn, properties), UsernamePasswordAuthenticationFilter.class)
                 ;
             }
 

@@ -14,6 +14,11 @@ public class SecurityJwtProperties {
     private List<String> authWhiteLists;
     private String routingPrefix;
     private String signingKey;
+    /**
+     * redis://7JynNEZ8@115.239.209.191:6379/5
+     */
+    private String redisUrl;
+    private String authHeader;
 
 
     public String getSigningKey() {
@@ -41,4 +46,19 @@ public class SecurityJwtProperties {
         this.authWhiteLists = authWhiteLists;
     }
 
+    public String getRedisUrl() {
+        return redisUrl;
+    }
+
+    public void setRedisUrl(String redisUrl) {
+        this.redisUrl = redisUrl;
+    }
+
+    public String getAuthHeader() {
+        return authHeader;
+    }
+
+    public void setAuthHeader(String authHeader) {
+        this.authHeader = authHeader;
+    }
 }

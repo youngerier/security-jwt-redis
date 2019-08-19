@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnClass(EnableSecurityJwtClient.class)
 @EnableConfigurationProperties(SecurityJwtProperties.class)
-@Import({SecurityJwtConfig.class})
+@Import({SecurityJwtConfig.class,SecurityJwtRedisConnection.class})
 public class SecurityJwtAutoConfiguration {
 }
 
