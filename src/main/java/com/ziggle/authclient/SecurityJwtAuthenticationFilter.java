@@ -21,7 +21,6 @@ import java.io.IOException;
 
 public class SecurityJwtAuthenticationFilter extends BasicAuthenticationFilter {
     private Logger log = LoggerFactory.getLogger(getClass());
-    private static final String Authorization = "Authorization";
     private static final String Bearer = "Bearer ";
     private ISecurityJwtTokenDecoder decoder;
     private SecurityJwtRedisConnection connection;
@@ -45,8 +44,12 @@ public class SecurityJwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         UsernamePasswordAuthenticationToken authentication = getAuthentication(request);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        chain.doFilter(request, response);
+        if (authentication == null) {
+            chain.doFilter(request, response);
+        } else {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            chain.doFilter(request, response);
+        }
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
@@ -55,7 +58,7 @@ public class SecurityJwtAuthenticationFilter extends BasicAuthenticationFilter {
             String token = connection.getUserInfo(header);
             if (token != null && !"".equals(token)) {
                 try {
-                    token = token.replaceFirst("Bearer ", "");
+                    token = token.replaceFirst(Bearer, "");
                     // 在filter中引用spring context
                     SysUserDetail currentUser = decoder.getCurrentUserFromToken(token);
                     //set value to   Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
@@ -78,6 +81,6 @@ public class SecurityJwtAuthenticationFilter extends BasicAuthenticationFilter {
                 }
             }
         }
-        throw new SecurityJwtTokenException("Http header does not contains Authorization");
+        return null;
     }
 }

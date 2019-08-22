@@ -4,11 +4,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.stream.Stream;
 
 public class SecurityJwtConfig {
 
@@ -47,28 +50,30 @@ public class SecurityJwtConfig {
                 if (props.getAuthWhiteLists() == null || props.getAuthWhiteLists().isEmpty()) {
                     arr = AUTH_WHITE_LIST;
                 } else {
-                    arr = props.getAuthWhiteLists().toArray(new String[0]);
+                    arr = Stream.of(props.getAuthWhiteLists().toArray(), AUTH_WHITE_LIST)
+                            .flatMap(Stream::of)
+                            .toArray(String[]::new);
                 }
 
                 http
                         .cors()
                         .and().csrf().disable()
-                        .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                            .sessionManagement()
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .and()
                         .authorizeRequests()
-                        // 预留注册地址 /sys-user/login 的POST请求 都放行
-                        .antMatchers(HttpMethod.POST, props.getRoutingPrefix() + "/sys_user/login").permitAll()
-                        .antMatchers(HttpMethod.POST, props.getRoutingPrefix() + "/user/").permitAll()
-                        // 白名单
-                        .antMatchers(arr).permitAll()
-                        // 所有请求需要身份认证
-                        .anyRequest().authenticated()
+                            // 预留注册地址 /sys-user/login 的POST请求 都放行
+                            .antMatchers(HttpMethod.POST, props.getRoutingPrefix() + "/sys_user/login").permitAll()
+                            .antMatchers(HttpMethod.POST, props.getRoutingPrefix() + "/user/").permitAll()
+                            // 白名单
+                            .antMatchers(arr).permitAll()
+                            // 所有请求需要身份认证
+                            .anyRequest().authenticated()
                         .and()
-                        // 认证前添加 token exception handler
-                        .addFilterBefore(new SecurityJwtUsernamePasswordLoginFilter(), ChannelProcessingFilter.class)
-//                        .addFilterAfter(new SecurityJwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
-                        .addFilterBefore(new SecurityJwtAuthenticationFilter(authenticationManager(), decoder, conn, properties), UsernamePasswordAuthenticationFilter.class)
+                             // 认证前添加 token exception handler
+                            .addFilterBefore(new SecurityJwtUsernamePasswordLoginFilter(), ChannelProcessingFilter.class)
+                            //.addFilterAfter(new SecurityJwtUsernamePasswordLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                            .addFilterBefore(new SecurityJwtAuthenticationFilter(authenticationManager(), decoder, conn, properties), UsernamePasswordAuthenticationFilter.class)
                 ;
             }
 
